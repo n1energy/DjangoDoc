@@ -1,7 +1,15 @@
 from django.http import HttpResponse
+from django.http import Http404
+from .models import Question
+from django.shortcuts import get_object_or_404, render
 
 def index(request):
-    return HttpResponse('Hello my old friend')
+    latest_question_list = Question.objects.order_by('-pub_date')[:5]
+    template = 'questions/index.html'
+    context = {
+        'latest_question_list': latest_question_list,
+    }
+    return render(request, template, context)
 
 def detail(request, question_id):
         return HttpResponse("You're looking at question %s." % question_id)
@@ -12,3 +20,7 @@ def results(request, question_id):
 
 def vote(request, question_id):
     return HttpResponse("You're voting on question %s." % question_id)# Create your views here.
+def detail(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/detail.html', {'question': question})
+
